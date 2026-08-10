@@ -1,0 +1,29 @@
+:root { font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: #17202a; background: #f5f7f8; font-synthesis: none; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input, textarea { font: inherit; }
+.shell { width: min(920px, calc(100% - 32px)); margin: 0 auto; padding: 64px 0; }
+header { margin-bottom: 32px; }
+.eyebrow { color: #5b6470; font-weight: 700; margin: 0 0 8px; }
+h1 { font-size: clamp(2.3rem, 7vw, 4.4rem); letter-spacing: -.055em; line-height: .98; margin: 0 0 16px; }
+h2 { margin-top: 32px; }
+form { display: flex; gap: 10px; padding: 12px; background: white; border: 1px solid #dfe4e8; border-radius: 16px; box-shadow: 0 12px 40px rgba(22,32,42,.08); }
+input { flex: 1; min-width: 0; border: 0; padding: 12px; outline: none; }
+button { border: 0; border-radius: 10px; padding: 12px 18px; color: white; background: #1d5cff; cursor: pointer; font-weight: 700; }
+button:disabled { cursor: not-allowed; opacity: .45; }
+.secondary { color: #174aaf; background: #e5eeff; }
+.back { color: #1d5cff; background: transparent; padding-left: 0; }
+.section-title { display: flex; align-items: baseline; justify-content: space-between; }
+table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; }
+th, td { text-align: left; padding: 16px; border-bottom: 1px solid #e8ecef; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: #f1f5ff; }
+.badge { display: inline-block; margin-right: 6px; padding: 4px 8px; border-radius: 999px; background: #e9edf1; font-size: 12px; font-weight: 700; text-transform: capitalize; }
+.badge.managed { background: #dff7e8; color: #126636; }.badge.hardcoded { background: #fff0d9; color: #8a4a00; }.badge.dynamic, .warning { background: #f2e8ff; color: #5d268b; }.badge.shared { background: #e5eeff; color: #174aaf; }
+.detail, .guidelines { margin-top: 24px; padding: 28px; background: white; border-radius: 16px; border: 1px solid #dfe4e8; }
+textarea { display: block; width: 100%; min-height: 110px; margin: 12px 0; padding: 12px; border: 1px solid #cbd3d9; border-radius: 10px; }
+.detail > input { width: 100%; margin: 8px 0 12px; padding: 12px; border: 1px solid #cbd3d9; border-radius: 10px; }
+.detail article { padding: 16px 0; border-bottom: 1px solid #e8ecef; }
+.warning, .status, .empty { padding: 16px; border-radius: 10px; }.status { background: #e9f0ff; }.empty { background: white; }
+code { font-size: .9em; }
+@media (max-width: 620px) { .shell { padding: 32px 0; } form { align-items: stretch; } th:nth-child(2), td:nth-child(2) { display: none; } }

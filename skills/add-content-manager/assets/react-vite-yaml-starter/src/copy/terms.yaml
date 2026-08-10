@@ -1,0 +1,11 @@
+guidelines:
+  intro: Write clearly and use preferred terms.
+  rules:
+    - title: Use direct language
+      body: Put the main action first and avoid unnecessary words.
+support:
+  text: support
+  definition: Help available to customers when they need assistance.
+  usage_example: Contact support
+  do_not_use:
+    - help desk

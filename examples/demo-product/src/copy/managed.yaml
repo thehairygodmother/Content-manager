@@ -1,0 +1,12 @@
+product_name: Demo Product
+buttons:
+  save: Save changes
+  cancel: Cancel
+messages:
+  welcome: Welcome back
+shared:
+  support: Contact support
+deprecated_terms:
+  Help desk: shared.support
+indexed: {}
+page_overrides: {}

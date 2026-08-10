@@ -1,0 +1,55 @@
+{
+  "generated": true,
+  "generatedAt": "2026-08-10T21:28:45.157Z",
+  "managed": {
+    "yaml": [
+      {
+        "file": "src/App.tsx",
+        "line": 2,
+        "context": "import managedRaw from './copy/managed.yaml?raw';"
+      }
+    ],
+    "buttons.save": [
+      {
+        "file": "src/ProductPage.tsx",
+        "line": 6,
+        "context": "<button>{managed.buttons.save}</button>"
+      }
+    ],
+    "shared.support": [
+      {
+        "file": "src/ProductPage.tsx",
+        "line": 7,
+        "context": "<a href=\"/support\">{managed.shared.support}</a>"
+      }
+    ]
+  },
+  "hardcoded": [
+    {
+      "text": "Your recent activity",
+      "file": "src/ProductPage.tsx",
+      "line": 5,
+      "context": "<p>Your recent activity</p>",
+      "prop": "children"
+    },
+    {
+      "text": "Account overview",
+      "file": "src/ProductPage.tsx",
+      "line": 3,
+      "context": "return <section aria-label=\"Account overview\">",
+      "prop": "aria-label"
+    }
+  ],
+  "dynamic": [
+    {
+      "expression": "Welcome ${firstName}",
+      "parts": [
+        "Welcome"
+      ],
+      "confidence": "traceable",
+      "file": "src/ProductPage.tsx",
+      "line": 4,
+      "context": "<h1>{`Welcome ${firstName}`}</h1>"
+    }
+  ]
+}

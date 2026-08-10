@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Manager"
+  short_description: "Add searchable, Git-reviewed product copy management"
+  default_prompt: "Use $add-content-manager to add Content Manager to this React and Vite product."

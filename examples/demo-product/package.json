@@ -1,0 +1,21 @@
+{
+  "name": "content-manager-react-vite-yaml-starter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "glossary:index": "node scripts/build-content-index.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "build": "npm run glossary:index && vite build"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "4.3.4",
+    "vite": "5.4.19",
+    "typescript": "5.7.3",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "yaml": "2.7.0"
+  },
+  "devDependencies": {}
+}

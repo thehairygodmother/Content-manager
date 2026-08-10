@@ -1,0 +1,13 @@
+{
+  "productName": "Demo Product",
+  "srcRoot": "src",
+  "managedFile": "src/copy/managed.yaml",
+  "termsFile": "src/copy/terms.yaml",
+  "usageOutputFile": "src/copy/contentUsage.generated.json",
+  "glossaryRoute": "/glossary",
+  "productHomeRoute": "/",
+  "skipScanDirs": ["content-manager", "node_modules", "dist"],
+  "pageRoutes": { "src/App.tsx": "/" },
+  "scanExtensions": [".tsx", ".jsx"],
+  "additionalCopyModules": []
+}

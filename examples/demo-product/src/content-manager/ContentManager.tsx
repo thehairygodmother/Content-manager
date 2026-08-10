@@ -1,0 +1,37 @@
+import { useMemo, useState } from 'react';
+import { buildCatalog, type Entry } from './catalog';
+import type { IndexData, ManagedStore, TermsStore } from './types';
+
+async function saveStore(file: 'src/copy/managed.yaml' | 'src/copy/terms.yaml', path: string, value: unknown) {
+  const response = await fetch('/api/content-manager/save', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ file, path, value }) });
+  if (!response.ok) throw new Error(await response.text());
+}
+
+function slug(text: string) { return text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, ''); }
+
+export function ContentManager({ managed, terms, usage }: { managed: ManagedStore; terms: TermsStore; usage: IndexData }) {
+  const [query, setQuery] = useState('');
+  const [submitted, setSubmitted] = useState('');
+  const [selected, setSelected] = useState<Entry | null>(null);
+  const [draft, setDraft] = useState('');
+  const [promotionKey, setPromotionKey] = useState('');
+  const [status, setStatus] = useState('');
+  const [view, setView] = useState<'search' | 'guidelines'>('search');
+  const [ruleTitle, setRuleTitle] = useState('');
+  const [ruleBody, setRuleBody] = useState('');
+  const [termText, setTermText] = useState('');
+  const [termDefinition, setTermDefinition] = useState('');
+  const [termAliases, setTermAliases] = useState('');
+  const catalog = useMemo(() => buildCatalog(managed, terms, usage), [managed, terms, usage]);
+  const results = submitted ? catalog.filter(entry => entry.text.toLowerCase().includes(submitted.toLowerCase())).sort((a, b) => a.text.localeCompare(b.text)) : [];
+
+  if (selected) return <main className="shell"><button className="back" onClick={() => { setSelected(null); setStatus(''); }}>← Search</button><section className="detail"><span className={`badge ${selected.implementation}`}>{selected.implementation}</span>{selected.shared && <span className="badge shared">shared</span>}<h1>{selected.text}</h1>{selected.review && <p className="warning">Engineering review required: the source cannot be traced confidently.</p>}<h2>Where it’s used</h2>{selected.usage.length ? <ul>{selected.usage.map((ref, i) => <li key={i}><code>{ref.file}:{ref.line}</code> — {ref.context}</li>)}</ul> : <p>No detected product usage.</p>}{selected.implementation === 'managed' && selected.path && <><h2>Edit managed value</h2><p>Changes are written only to the managed store on your current branch.</p><textarea value={draft || selected.text} onChange={e => setDraft(e.target.value)} /><button onClick={async () => { try { await saveStore('src/copy/managed.yaml', selected.path!, draft || selected.text); setStatus('Saved. Reload the host page to verify, then request engineering review.'); } catch (e) { setStatus(e instanceof Error ? e.message : 'Save failed'); } }}>Save</button></>}{selected.implementation === 'hardcoded' && <><h2>Promote to managed copy</h2><p>Promotion adds a managed key. It does not replace the source literal.</p><input value={promotionKey} onChange={e => setPromotionKey(slug(e.target.value))} placeholder="managed_key" /><button disabled={!promotionKey} onClick={async () => { try { await saveStore('src/copy/managed.yaml', `indexed.${promotionKey}`, selected.text); setStatus(`Added. Engineering reference: MANAGED_COPY.indexed.${promotionKey}. The original literal is unchanged.`); } catch (e) { setStatus(e instanceof Error ? e.message : 'Promotion failed'); } }}>Promote</button></>} {status && <p className="status">{status}</p>}</section></main>;
+
+  if (view === 'guidelines') {
+    const rules = terms.guidelines?.rules || [];
+    const termRecords = Object.entries(terms).filter(([key, value]) => key !== 'guidelines' && value?.text);
+    return <main className="shell"><button className="back" onClick={() => { setView('search'); setStatus(''); }}>← Search</button><header><p className="eyebrow">{managed.product_name}</p><h1>Content guidelines</h1><p>{terms.guidelines?.intro}</p></header><section className="detail"><h2>Rules</h2>{rules.map((rule, index) => <article key={rule.title}><h3>{rule.title}</h3><p>{rule.body}</p><button className="secondary" onClick={async () => { await saveStore('src/copy/terms.yaml', 'guidelines.rules', rules.filter((_, i) => i !== index)); setStatus('Rule removed. Reload to see the updated store.'); }}>Remove</button></article>)}<h3>Add rule</h3><input placeholder="Rule title" value={ruleTitle} onChange={e => setRuleTitle(e.target.value)} /><textarea placeholder="Rule guidance" value={ruleBody} onChange={e => setRuleBody(e.target.value)} /><button disabled={!ruleTitle.trim() || !ruleBody.trim()} onClick={async () => { if (rules.some(rule => rule.title.toLowerCase() === ruleTitle.trim().toLowerCase())) return setStatus('A rule with that title already exists.'); await saveStore('src/copy/terms.yaml', 'guidelines.rules', [...rules, { title: ruleTitle.trim(), body: ruleBody.trim() }]); setStatus('Rule added. Reload to see the updated store.'); }}>Add rule</button></section><section className="detail"><h2>Terms</h2>{termRecords.map(([key, record]) => <article key={key}><h3>{record.text}</h3><p>{record.definition}</p>{record.do_not_use?.length ? <p><strong>Do not use:</strong> {record.do_not_use.join(', ')}</p> : null}</article>)}<h3>Add term</h3><input placeholder="Preferred term" value={termText} onChange={e => setTermText(e.target.value)} /><textarea placeholder="Definition (required)" value={termDefinition} onChange={e => setTermDefinition(e.target.value)} /><input placeholder="Do not use (comma-separated)" value={termAliases} onChange={e => setTermAliases(e.target.value)} /><button disabled={!termText.trim() || !termDefinition.trim()} onClick={async () => { const key = slug(termText); if (terms[key]) return setStatus('A term with that key already exists.'); const aliases = termAliases.split(',').map(item => item.trim()).filter(item => item.length >= 4 && item.toLowerCase() !== termText.trim().toLowerCase()); await saveStore('src/copy/terms.yaml', key, { text: termText.trim(), definition: termDefinition.trim(), do_not_use: aliases }); setStatus('Term added. Reload to see it in Guidelines and search.'); }}>Add term</button>{status && <p className="status">{status}</p>}</section></main>;
+  }
+
+  return <main className="shell"><header><p className="eyebrow">{managed.product_name}</p><h1>Content Manager</h1><p>Find wording as it appears in the product—without knowing where or how it’s stored.</p><button className="secondary" onClick={() => setView('guidelines')}>Content guidelines</button></header><form onSubmit={e => { e.preventDefault(); setSubmitted(query.trim()); }}><input aria-label="Search UI wording" placeholder={`Search ${managed.product_name} wording`} value={query} onChange={e => setQuery(e.target.value)} /><button>Search</button></form>{submitted && <section><div className="section-title"><h2>Results</h2><span>{results.length}</span></div>{results.length ? <table><thead><tr><th>Text</th><th>Implementation</th><th>Used in</th></tr></thead><tbody>{results.map(entry => <tr key={entry.id} onClick={() => { setSelected(entry); setDraft(entry.text); setPromotionKey(slug(entry.text)); }}><td>{entry.text}</td><td><span className={`badge ${entry.implementation}`}>{entry.implementation}</span>{entry.shared && <span className="badge shared">shared</span>}</td><td>{entry.usage.length || '—'}</td></tr>)}</tbody></table> : <div className="empty">No matching wording found.</div>}</section>}</main>;
+}
