@@ -24,12 +24,12 @@ Git remains the source of truth. Content Manager is not a production CMS and doe
 
 ## Who it is for
 
-Anyone responsible for a digital product
-Product managers and product owners
-Content designers and UX writers
-Product and UX designers
-Engineers supporting product-content infrastructure
-Teams that want to manage and govern product content using coding agents
+- Anyone responsible for a digital product
+- Product managers and product owners
+- Content designers and UX writers
+- Product and UX designers
+- Engineers supporting product-content infrastructure
+- Teams that want to manage and govern product content using coding agents
 
 ## Storage-agnostic content discovery
 
